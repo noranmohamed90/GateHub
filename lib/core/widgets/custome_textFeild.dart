@@ -3,13 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:gatehub/core/constants.dart';
 
 class CustomeTextfeild extends StatefulWidget {
-  const CustomeTextfeild({super.key, this.hinttext, this.type, this.inputFormatter, this.isPassword =false, this.controller,this.onChanged});
+  const CustomeTextfeild({super.key, this.hinttext, this.type, this.inputFormatter, this.isPassword =false, this.controller,this.onChanged, this.enabled});
   final String ?hinttext;
   final TextInputType? type;
   final List<TextInputFormatter>? inputFormatter;
   final bool  isPassword;
   final TextEditingController?controller;
   final Function(String)? onChanged;
+  final bool? enabled;
 
   @override
   State<CustomeTextfeild> createState() => _CustomeTextfeildState();
@@ -22,6 +23,7 @@ class _CustomeTextfeildState extends State<CustomeTextfeild> {
     return Padding(
             padding: const EdgeInsets.only(left: 25,right: 25, top:10),
             child: TextField(
+              enabled: widget.enabled ?? true,
               controller: widget.controller,
               obscureText: widget.isPassword? _isObscure: false,
               keyboardType: widget.type,

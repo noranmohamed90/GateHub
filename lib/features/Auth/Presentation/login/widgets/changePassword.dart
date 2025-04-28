@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gatehub/core/constants.dart';
 import 'package:gatehub/core/widgets/custome_buttons.dart';
 import 'package:gatehub/core/widgets/custome_textfeild.dart';
 import 'package:gatehub/core/widgets/sapce_widget.dart';
-import 'package:gatehub/features/Auth/Presentation/login/widgets/otp_code.dart';
+import 'package:gatehub/cubit/bloc/email_cubit/email_cubit_cubit.dart';
+import 'package:gatehub/features/Auth/Presentation/login/widgets/otp_body.dart';
 
 
 class ChangepasswordBody extends StatefulWidget {
@@ -13,28 +15,25 @@ class ChangepasswordBody extends StatefulWidget {
   @override
   State<ChangepasswordBody> createState() => _ChangepasswordBodyState();
 }
-class _ChangepasswordBodyState extends State<ChangepasswordBody> {
-     final TextEditingController phoneController = TextEditingController();
-
-void changePass() {
-  if (!mounted) return; 
-  if (phoneController.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Enter your phone')),);
-    return;
-  }  else if (!RegExp(r'^(010|011|012|015)[0-9]{8}$').hasMatch(phoneController.text)) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text(' Invalid phone number')) );
-    return;
-  } else {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const OtpCode()),
-    );}
-}  
+class _ChangepasswordBodyState extends State<ChangepasswordBody> { 
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return  BlocConsumer<EmailCubitCubit, EmailCubitState>(
+      listener: (context, state) {
+       if(state is EmailFailure){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+       }else if(state is EmailSuccess){
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Check Your Email !')));
+        Future.delayed(const Duration(seconds: 2),(){
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const OtpBody(),
+      ));
+
+        });  }  },
+      builder: (context, state) {
+        return 
+    Scaffold(
       backgroundColor: Colors.white,
       body:SingleChildScrollView(
         child: Column(
@@ -55,20 +54,20 @@ void changePass() {
          const  VerticalSpace(4),
          const  Padding(
         padding: EdgeInsets.only(left: 25,right: 25,bottom: 12),
-        child: Text('Provide Your Phone Number and we will send you a code to reset your password',
+        child: Text('Enter your email to receive an OTP for password reset.',
         style: TextStyle(
           color: Colors.grey,
         ),) ),
       SizedBox(
                 height: 55,
                 child: CustomeTextfeild(
-                  controller: phoneController,
-                  type:TextInputType.number ,
-                  inputFormatter: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(11)
-                  ],
-                  hinttext: ' Enter your phone number',
+                  controller: context.read<EmailCubitCubit>().emailController,
+                  type:TextInputType.emailAddress ,
+                  // inputFormatter: [
+                  //   FilteringTextInputFormatter.digitsOnly,
+                  //   LengthLimitingTextInputFormatter(11)
+                  // ],
+                  hinttext: ' Enter your email',
                    ),),
                   const VerticalSpace(10),
                 Center(
@@ -76,9 +75,11 @@ void changePass() {
                   height: 55,
                   width: 180,
                   child: CustomeGeneralButton(
-                    text: 'Next', 
-                    onTap: changePass,             
+                    text: 'Send Code', 
+                    onTap: (){
+                      context.read<EmailCubitCubit>().emailValidation();
+                    }             
                   ), ), ),
        ])) );
-  }
-}
+
+});}}

@@ -1,40 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gatehub/Home/presentation/widgets/notifications.dart';
-import 'package:gatehub/Screens/Model/profileInfo.dart';
 import 'package:gatehub/core/constants.dart';
 import 'package:gatehub/core/widgets/Card.dart';
 import 'package:gatehub/core/widgets/sapce_widget.dart';
-import 'package:gatehub/cubit/balance_cubit.dart';
-import 'package:gatehub/cubit/balance_states.dart';
+import 'package:gatehub/cubit/cubit/login_cubit.dart';
 import 'package:gatehub/cubit/notifications_cubit.dart';
 import 'package:gatehub/cubit/notifications_states.dart';
+import 'package:intl/intl.dart';
 
-class Profilebody extends StatelessWidget {
+class Profilebody extends StatefulWidget {
   Profilebody({super.key});
-   
-   final Profileinfo profile=Profileinfo(
-    userName: 'Ahmed', nationalId: '30397518467853', 
-    phoneNumber: '01197483261',
-     vehicle:[VehicleDetails(color: 'black',plateNumber: 'ABC-123',model: 'Mercedes-Benz G-Class'),
-     VehicleDetails(color: 'white',plateNumber: 'ABC-111',model: 'Toyota Corolla')] );
-      // transactionModel: [TransactionModel(amount: '100', date: '12/11/2024'),
-      // TransactionModel(amount: '150', date: '5/9/2024'),
-      // TransactionModel(amount: '100', date: '22/5/2024'),
-      //]);
-   
+
+  @override
+  State<Profilebody> createState() => _ProfilebodyState();
+}
+
+class _ProfilebodyState extends State<Profilebody> {
+   @override
+  void initState() {
+    super.initState();
+    context.read<LoginCubit>().getUserInfo();
+  }
+  //  final Profileinfo profile=Profileinfo(
+  //   userName: 'Ahmed', nationalId: '30397518467853', 
+  //   phoneNumber: '01197483261',
+  //    vehicle:[VehicleDetails(color: 'black',plateNumber: 'ABC-123',model: 'Mercedes-Benz G-Class'),
+  //    VehicleDetails(color: 'white',plateNumber: 'ABC-111',model: 'Toyota Corolla')] );
+
+  //     // transactionModel: [TransactionModel(amount: '100', date: '12/11/2024'),
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return  BlocConsumer<LoginCubit, LoginState>(
+      listener: (context, state) {
+        if(state is GetUserInfoFailure){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.errorMessage),));
+        }
+      },
+      builder: (context, state) {
+        return   Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
+      appBar:   AppBar(
        // iconTheme: const IconThemeData(color:Colors.white),
         backgroundColor: Colors.white,
         title: const Text(
-          'Profile',
+          'My Profile',
           style: TextStyle(
             color: kMainColor,
-            fontSize: 25,
+            fontSize: 22,
             fontWeight: FontWeight.bold
           ),
         ),
@@ -73,46 +87,80 @@ class Profilebody extends StatelessWidget {
               ))
           ]   );
 
-  })],
-        
-      ),
-      body: SingleChildScrollView(
+  })],),
+      body: state is GetUserInfoLoading? const CircularProgressIndicator():state is GetUserInfoSuccess?
+       SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Center(
-              child: Padding(
-                padding: EdgeInsets.only(top: 25),
-                child: CircleAvatar(
-                  radius: 40,
-                  backgroundImage: AssetImage('assets/images/profile.jpg'),
+           const  SizedBox(height: 10,),
+             Center(
+              child: Row(
+                children: [
+                 const  Padding(
+                    padding: EdgeInsets.only(left: 28),
+                    child: CircleAvatar(
+                      radius: 32,
+                      backgroundImage: AssetImage('assets/images/profile.jpg'),
+                    ),
+                  ),
+                 const HorizintalSpace(2.5),
+            Column(
+              children: [
+                Center(
+                  child: Text(
+                  state.user.name,
+                    style: const TextStyle(fontSize: 22, color: kMainColor,
+                    fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-            ),
-            const VerticalSpace(1.5),
-            Center(
+                Center(
               child: Text(
-                profile.userName,
-                style: const TextStyle(fontSize: 23, color: kMainColor),
-              ),
+              state.user.natId,
+                style: const TextStyle(fontSize: 15, color: Colors.grey),), ), ],), ], ),), 
+              const  VerticalSpace(3),
+            //   Padding(
+            //     padding: const EdgeInsets.only(left: 25),
+            //     child: Column(
+            //       children: [
+            //         Row(
+            //           children: [
+            //            const  Icon(Icons.location_on,
+            //            color: kMainColor,
+            //            size: 20,),
+            //            const HorizintalSpace(2),
+            //             Text(state.user.address,
+            //             style: const TextStyle(fontSize: 15, color: kMainColor)
+            //             ),
+            //           ],),
+            //           const VerticalSpace(2),
+            //            Row(
+            //             children: [
+            //               const  Icon(Icons.phone,
+            //               color: kMainColor,
+            //               size: 20,
+            //               ),
+            //                const HorizintalSpace(2),
+            //                Text(state.user.phoneNumber,
+            //                style: const TextStyle(fontSize: 15, color: kMainColor)), ],),],),),
+             CustomeCard(
+              //title: 'Government',
+              description: state.user.address,
+              
+              icon: Icons.location_on,
             ),
-           const  VerticalSpace(2),
             CustomeCard(
-              title: 'National ID',
-              description: profile.nationalId,
-              icon: Icons.badge,
-            ),
-            CustomeCard(
-              title: 'Phone Number',
-              description: profile.phoneNumber,
+             // title: 'Phone Number',
+              description: state.user.phoneNumber,
               icon: Icons.phone,
             ),
+            const VerticalSpace(1),
             const Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: EdgeInsets.only(left: 22),
              child: Text(
-               'Vehicles',
+               'Vehicles Details ',
         style: TextStyle(
-            fontSize: 18,
+            fontSize: 15,
             color: kMainColor,
             fontWeight: FontWeight.bold),
       ),
@@ -120,24 +168,23 @@ class Profilebody extends StatelessWidget {
             ListView.builder(
               shrinkWrap: true,
                physics: const NeverScrollableScrollPhysics(),
-              itemCount: profile.vehicle.length,
+              itemCount: state.user.vehicles.length,
               itemBuilder: (context, index) {
-                 final Vehicle = profile.vehicle[index];
-                 return  DetailsCard(
-                title: 'Vechile ${index+1}',
-                icon: Icons.directions_car,
-                model: 'Model :${Vehicle.model}',
-                plateicon: Icons.confirmation_num,
-                num: 'Plate No :${Vehicle.plateNumber}',
-                coloricon: Icons.color_lens,
-                color: 'Color :${Vehicle.color}',
-              );
-              }
-            ),
-           const Divider(endIndent: 25, indent: 25),
+                 final Vehicle = state.user.vehicles[index];
+                return DetailsCard(
+                title: Vehicle.type,
+               // icon: Icons.directions_car,
+                model: Vehicle.modelCompany,
+               // plateicon: Icons.confirmation_num,
+                num: Vehicle.plateNumber,
+               // coloricon: Icons.color_lens,
+               licenseEnd: 'License Expiration Date: ${DateFormat('d/MM/yyyy').format(DateTime.parse(Vehicle.licenseEnd))}',
+                color: Vehicle.color,
 
+              );} ),
+           const Divider(endIndent: 25, indent: 25),
             const Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.only(left: 22),
               child: Text(
                 'Transaction History',
                 style: TextStyle(
@@ -146,61 +193,93 @@ class Profilebody extends StatelessWidget {
                     fontWeight: FontWeight.bold),
               ),
             ),
-            BlocBuilder<BalanceCubit,BalanceState>
-            (builder: (context,state) {
-             if(state is UpdateBalanceState){
-              return  ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: state.transactions.length,
-              itemBuilder: (context, index) {
-                final transaction = state.transactions[index];
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.battery_charging_full,
-                          size: 30, color: kMainColor),
-                      const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Recharge',
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: kMainColor,
-                                 // fontWeight: FontWeight.bold
-                                 ),
-                          ),
-                          Text(
-                            transaction['amount']!,
-                            style: const TextStyle(
-                                fontSize: 18, color: kMainColor),
+            SizedBox(
+              height: 500,
+              child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: state.user.transactions.length,
+                itemBuilder: (context, index) {
+                  final transactionHistory = state.user.transactions[index];
+                  return Align(
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                      decoration: BoxDecoration(
+                        color: //Colors.white,
+                        const Color(0XFFF9FAFD) ,
+                        //const Color(0XFFF7FAFC),
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
-                      const Spacer(),
-                      Text(
-                        transaction['date']!,
-                        style:
-                            const TextStyle(fontSize: 16, color: kMainColor),
+                      child: Row(
+                        children: [
+                          const CircleAvatar(
+                            radius: 22,
+                            backgroundColor: kMainColor,
+                            child: Icon(
+                              Icons.account_balance_wallet,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const HorizintalSpace(1),
+                          Expanded(
+                           child:
+                             Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  transactionHistory.paymentType,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: kMainColor
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Row(
+                                  children: [
+                                    Text(
+                                      transactionHistory.amount.toString(),
+                                      style: const TextStyle(fontSize: 16,
+                                      color: kMainColor
+                                      ),
+                                      softWrap: true,
+                                      textAlign: TextAlign.start,
+                                      
+                                    ),
+                                   const HorizintalSpace(18),
+                                    Text(
+                                  transactionHistory.status,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: kMainColor
+                                  ),
+                                ),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                 DateFormat('d/MM/yyyy').format(DateTime.parse(transactionHistory.transactionDate)),
+                                  style: const TextStyle( 
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          //),
+                       ) ],
                       ),
-                    ],
-                  ),
-                );
-              },
-            );
-             }else{
-              return const CircularProgressIndicator();
-             }
-            })
-            
-           
-          ],
-        ),
-      ),
-     
-    );
+                    ),
+                  );
+                },
+              ),)])):Container()); });
   }
 }

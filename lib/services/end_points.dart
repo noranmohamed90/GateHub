@@ -1,0 +1,35 @@
+class EndPoints {
+  static String baseUrl= "http://gatehub.runasp.net";
+  static String login= "/api/vehicleOwner/login";
+  static String voProfile= "/api/vehicleOwner/VOProfile";
+  static String requestOtp="/api/vehicleOwner/request-otp";
+  static String resetPassword ="/api/vehicleOwner/reset-password";
+} 
+
+ class ApiKey{
+  static String statusCode = "statusCode";
+  static String name = "name";
+  static String phoneNumber = "phoneNumber";
+  static String token = "token";
+  static String natId= "natId";
+  static String  id= "id";
+  static String password= "password";
+  static String rememberMe = "true";
+  static String balance = "balance";
+  static String licenseEnd = "licenseEnd";
+  static String modelCompany = "modelCompany";
+  static String color = "color";
+  static String type = "type";
+  static String address = "address";
+  static String plateNumber = "plateNumber";
+  static String paymentType ="paymentType";
+  static String amount = "amount";
+  static String transactionDate = "transactionDate";
+  static String status = "status";
+  static String email = "email";
+  static String otp = "otp";
+  static String newPassword = "newPassword";
+  static String confirmPassword = "confirmPassword";
+  
+  
+ } 

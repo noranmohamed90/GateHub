@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gatehub/cache/cache_helper.dart';
+import 'package:gatehub/core/utiles/service_locator.dart';
 import 'package:gatehub/core/utiles/size_config.dart';
+import 'package:gatehub/features/Auth/Presentation/login/widgets/loginView.dart';
 import 'package:gatehub/features/on_Bording/presentation/on_bordingview.dart';
 import 'package:get/get.dart';
 class SplashBody extends StatefulWidget {
@@ -38,8 +41,14 @@ class _SplashBodyState extends State<SplashBody> with SingleTickerProviderStateM
   }
   
   void goToNextView() {
-    Future.delayed(Duration(seconds: 3),(){
-      Get.to(()=>OnBordingview(), transition: Transition.zoom);
+    Future.delayed(const Duration(seconds: 3),(){
+      final isOnBoardingVisited = 
+             getIt<CacheHelper>().getData(key: "isOnBoardingVisited")??false;
+    if(isOnBoardingVisited==true){
+        Get.to(()=>const LoginView(), transition: Transition.zoom);
+    }else{
+        Get.to(()=>const OnBordingview(), transition: Transition.zoom);
+    }
     }
     );
   }

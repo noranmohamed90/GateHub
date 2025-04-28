@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gatehub/core/constants.dart';
 
 class CustomeCard extends StatelessWidget {
-  const CustomeCard({super.key,required this.title, required this.description, this.icon});
-  final String?title;
+  const CustomeCard({super.key, required this.description, this.icon});
+  //final String?title;
   final String ? description;
   final IconData ?icon;
 
@@ -12,14 +12,14 @@ class CustomeCard extends StatelessWidget {
     return  Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding:const  EdgeInsets.symmetric(horizontal: 12.0),
-          child: Text(title!,
-          style: const TextStyle(
-            color: kMainColor,
-            fontSize: 15,
-            fontWeight: FontWeight.bold
-          ),),
+        const Padding(
+          padding:EdgeInsets.symmetric(horizontal: 12.0),
+          // child: Text(title!,
+          // style: const TextStyle(
+          //   color: kMainColor,
+          //   fontSize: 15,
+          //   fontWeight: FontWeight.bold
+          // ),),
         ),
         Padding(
           padding: const EdgeInsets.only(right: 8,left: 8),
@@ -46,7 +46,7 @@ class CustomeCard extends StatelessWidget {
 
 
 class DetailsCard extends StatelessWidget {
-  const DetailsCard({super.key, this.title, this.model, this.num, this.color, this.caricon, this.plateicon, this.coloricon, this.icon});
+  const DetailsCard({super.key, this.title, this.model, this.num, this.color, this.caricon, this.plateicon, this.coloricon, this.icon, this.type, this.licenseEnd});
   final String?title;
   final String ? model;
   final String ? num;
@@ -55,6 +55,8 @@ class DetailsCard extends StatelessWidget {
   final IconData ?caricon;
   final IconData ?plateicon;
   final IconData ?coloricon;
+  final String?type;
+  final String?licenseEnd;
 
   @override
   Widget build(BuildContext context) {
@@ -69,22 +71,29 @@ class DetailsCard extends StatelessWidget {
       children: <Widget>[
         ListTile(
           tileColor: Colors.white,
-          leading: Icon(icon),
+         // leading: Icon(icon),
           title: Text(model!,
           style:const  TextStyle(
         color: kMainColor,
         fontSize: 13,),),),
         ListTile(
            tileColor: Colors.white,
-          leading: Icon(plateicon),
+        //  leading: Icon(plateicon),
           title: Text(num!,
           style:const  TextStyle(
          color: kMainColor,
         fontSize: 13,),),),
         ListTile(
           tileColor: Colors.white,
-          leading: Icon(coloricon),
+         // leading: Icon(coloricon),
           title: Text(color!,
+          style:const  TextStyle(
+        color: kMainColor,
+        fontSize: 13,),),),
+        ListTile(
+          tileColor: Colors.white,
+         // leading: Icon(icon),
+          title: Text(licenseEnd!,
           style:const  TextStyle(
         color: kMainColor,
         fontSize: 13,),),),

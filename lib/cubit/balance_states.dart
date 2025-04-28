@@ -1,6 +1,8 @@
 
 abstract class BalanceState {}
 
+
+class BalanceInitial extends BalanceState {}
 class UpdateBalanceState extends BalanceState{
       final double balance;
       final double pendingFees;
@@ -28,5 +30,9 @@ class UpdateBalanceState extends BalanceState{
        lastPaymentDate: lastPaymentDate??this.lastPaymentDate, 
        transactions: transactions ?? this.transactions);
 
-   }
+   } 
+}
+class BalanceError extends BalanceState {
+  final String message;
+  BalanceError(this.message);
 }
