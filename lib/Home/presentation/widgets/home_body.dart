@@ -4,8 +4,6 @@ import 'package:gatehub/Home/presentation/widgets/notifications.dart';
 import 'package:gatehub/core/constants.dart';
 import 'package:gatehub/core/utiles/size_config.dart';
 import 'package:gatehub/core/widgets/sapce_widget.dart';
-import 'package:gatehub/cubit/balance_cubit.dart';
-import 'package:gatehub/cubit/balance_states.dart';
 import 'package:gatehub/cubit/cubit/login_cubit.dart';
 import 'package:gatehub/cubit/notifications_cubit.dart';
 import 'package:gatehub/cubit/notifications_states.dart';
@@ -18,25 +16,27 @@ class HomeBody extends StatefulWidget {
   @override
   State<HomeBody> createState() => _HomeBodyState();
 }
- String getNearestLicenseDate(UserInfo user) {
-    if (user.vehicles.isEmpty) {
-      return 'No Vehicles';
-    }
 
-    final nearestLicenseEndDate = user.vehicles
-        .map((vehicle) => DateTime.parse(vehicle.licenseEnd))
-        .toList()
-      ..sort();
-
-    return DateFormat('d/MM/yyyy').format(nearestLicenseEndDate.first);
+String getNearestLicenseDate(UserInfo user) {
+  if (user.vehicles.isEmpty) {
+    return 'No Vehicles';
   }
 
-class _HomeBodyState extends State<HomeBody> { 
+  final nearestLicenseEndDate = user.vehicles
+      .map((vehicle) => DateTime.parse(vehicle.licenseEnd))
+      .toList()
+    ..sort();
+
+  return DateFormat('d/MM/yyyy').format(nearestLicenseEndDate.first);
+}
+
+class _HomeBodyState extends State<HomeBody> {
   @override
   void initState() {
     super.initState();
     context.read<LoginCubit>().getUserInfo();
   }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginCubit, LoginState>(
@@ -44,12 +44,6 @@ class _HomeBodyState extends State<HomeBody> {
         if (state is GetUserInfoFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.errorMessage)),
-          );
-        } else if (state is GetUserInfoSuccess) {
-          context.read<BalanceCubit>().setInitialData(
-            balance: state.user.balance,
-            pendingFees: 0,
-            lastPaymentDate: ''
           );
         }
       },
@@ -75,7 +69,9 @@ class _HomeBodyState extends State<HomeBody> {
                           context.read<NotificationCubit>().readNotifications();
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) =>  Notifications()),
+                            MaterialPageRoute(
+                              builder: (context) => Notifications(),
+                            ),
                           );
                         },
                       ),
@@ -111,13 +107,13 @@ class _HomeBodyState extends State<HomeBody> {
                   ? SingleChildScrollView(
                       child: Column(
                         children: [
-                          
                           Center(
                             child: SizedBox(
                               height: SizeConfig.defualtSize! * 12,
                               width: SizeConfig.defualtSize! * 12,
                               child: const CircleAvatar(
-                                backgroundImage: AssetImage('assets/images/logo.png'),
+                                backgroundImage:
+                                    AssetImage('assets/images/logo.png'),
                                 backgroundColor: kMainColor,
                               ),
                             ),
@@ -131,77 +127,65 @@ class _HomeBodyState extends State<HomeBody> {
                               fontSize: 25,
                             ),
                           ),
-                          BlocBuilder<BalanceCubit, BalanceState>(
-                            builder: (context, balanceState) {
-                              if (balanceState is UpdateBalanceState) {
-                                return Column(
-                                  children: [
-                                    Text(
-                                      "Your Balance is ${balanceState.balance.toString()} LE",
-                                      style: const TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                    const VerticalSpace(8),
-                                    Padding(
-                                      padding: const EdgeInsets.all(30.0),
-                                      child: Row(
-                                        children: [
-                                          const Text(
-                                            "Pending Fees",
-                                            style: TextStyle(
-                                              color: kMainColor,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                          const HorizintalSpace(12),
-                                          Text(
-                                            "${balanceState.pendingFees} LE",
-                                            style: const TextStyle(
-                                              color: kMainColor,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const Divider(
-                                      color: Colors.grey,
-                                      indent: 55,
-                                      endIndent: 60,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 40, left: 15, bottom: 20),
-                                      child: Row(
-                                        children: [
-                                          const Text(
-                                            "Last Payment date",
-                                            style: TextStyle(
-                                              color: kMainColor,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                          const HorizintalSpace(9),
-                                          Text(
-                                            balanceState.lastPaymentDate,
-                                            style: const TextStyle(
-                                              color: kMainColor,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              } else {
-                                return const Center(child: CircularProgressIndicator());
-                              }
-                            },
+                          const VerticalSpace(1),
+                          Text(
+                            "Your Balance is ${state.user.balance} LE",
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15,
+                            ),
                           ),
-                          
+                          const VerticalSpace(8),
+                          Padding(
+                            padding: const EdgeInsets.all(30.0),
+                            child: Row(
+                              children: [
+                                const Text(
+                                  "Pending Fees",
+                                  style: TextStyle(
+                                    color: kMainColor,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                const HorizintalSpace(12),
+                                Text(
+                                  "120 LE",
+                                  style: const TextStyle(
+                                    color: kMainColor,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Divider(
+                            color: Colors.grey,
+                            indent: 55,
+                            endIndent: 60,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 40, left: 15, bottom: 20),
+                            child: Row(
+                              children: [
+                                const Text(
+                                  "Last Payment date",
+                                  style: TextStyle(
+                                    color: kMainColor,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                const HorizintalSpace(9),
+                                Text(
+                                  '---',
+                                  style: const TextStyle(
+                                    color: kMainColor,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsets.only(top: 8, left: 15),
                             child: Row(
@@ -215,7 +199,7 @@ class _HomeBodyState extends State<HomeBody> {
                                 ),
                                 const HorizintalSpace(5),
                                 Text(
-                                  getNearestLicenseDate(state.user),  
+                                  getNearestLicenseDate(state.user),
                                   style: const TextStyle(
                                     color: kMainColor,
                                     fontSize: 18,

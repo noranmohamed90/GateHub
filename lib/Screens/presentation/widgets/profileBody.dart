@@ -246,7 +246,7 @@ class _ProfilebodyState extends State<Profilebody> {
                                   children: [
                                     Text(
                                       transactionHistory.amount.toString(),
-                                      style: const TextStyle(fontSize: 16,
+                                      style: const TextStyle(fontSize: 15,
                                       color: kMainColor
                                       ),
                                       softWrap: true,

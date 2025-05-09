@@ -1,4 +1,5 @@
  import 'package:bloc/bloc.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:gatehub/cache/cache_helper.dart';
 import 'package:gatehub/core/utiles/service_locator.dart';
@@ -19,6 +20,12 @@ class LoginCubit extends Cubit<LoginState> {
   
   final TextEditingController natIdController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  String?deviceToken;
+  Future<void> getDeviceToken() async {
+  await FirebaseMessaging.instance.requestPermission(); 
+  deviceToken = await FirebaseMessaging.instance.getToken();
+  print("Device Token in LoginCubit: $deviceToken");
+}
   
   String? validateInput() {
     if (natIdController.text.isEmpty || passwordController.text.isEmpty) {
@@ -43,7 +50,8 @@ class LoginCubit extends Cubit<LoginState> {
       data: {
       ApiKey.natId : natIdController.text,
       ApiKey.password : passwordController.text,
-      ApiKey.rememberMe:true
+      ApiKey.rememberMe:true,
+      ApiKey.deviceToken:deviceToken,
   });
       user=LoginModel.fromJson(response);
     final decodeToken =   JwtDecoder.decode(user!.token); 
@@ -52,8 +60,10 @@ class LoginCubit extends Cubit<LoginState> {
      getIt<CacheHelper>().saveData(key: ApiKey.id,value:  user!.id);
      getIt<CacheHelper>().saveData(key: 'name', value: user!.name);
      getIt<CacheHelper>().saveData(key: 'natId', value: natIdController.text);
+     getIt<CacheHelper>().saveData(key: ApiKey.deviceToken, value: user!.deviceToken);
     print("User ID: ${user!.id}");
     print("User email: ${user!.email}");
+    print("deviceToken: ${user!.deviceToken}");
   emit(LoginSuccess());
 } on ServerException catch (e) {
   emit(LoginFailure(errorMessage: e.errorModel.errorMessage));
@@ -79,6 +89,15 @@ getUserInfo ()async{
 } on ServerException catch (e) {
    emit(GetUserInfoFailure(errorMessage: e.errorModel.errorMessage));
 }
+}
+void checkIfUserLoggedIn() async {
+  final token = await getIt<CacheHelper>().getData(key: ApiKey.token);
+  if (token != null) {
+    emit(LoginSuccess());  
+    getUserInfo();  
+  } else {
+    emit(LoginInitial());
+  }
 }
 }
 

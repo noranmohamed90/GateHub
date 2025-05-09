@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "645215949745",
+    "project_id": "gatehub-c9158",
+    "storage_bucket": "gatehub-c9158.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:645215949745:android:8b969d98bb2ce4d103e390",
+        "android_client_info": {
+          "package_name": "com.example.gatehub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjz2LNXVLiz3L8iw0RbsU4eTzW65t729Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

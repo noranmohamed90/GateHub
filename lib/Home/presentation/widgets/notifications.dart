@@ -4,8 +4,21 @@ import 'package:gatehub/core/constants.dart';
 import 'package:gatehub/core/widgets/sapce_widget.dart';
 import 'package:gatehub/cubit/notifications_cubit.dart';
 import 'package:gatehub/cubit/notifications_states.dart';
+import 'package:intl/intl.dart';
 
-class Notifications extends StatelessWidget {
+class Notifications extends StatefulWidget {
+  @override
+  State<Notifications> createState() => _NotificationsState(); 
+}
+
+class _NotificationsState extends State<Notifications> {
+  @override
+void initState() {
+  super.initState();
+  final cubit = context.read<NotificationCubit>();
+  cubit.getNotifications();       
+  cubit.readNotifications();
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,10 +32,15 @@ class Notifications extends StatelessWidget {
       ),
       body: BlocBuilder<NotificationCubit, NotificationState>(
         builder: (context, state) {
-          if (state is NotificationUpdated && state.notifications.isNotEmpty) {
-            return ListView.builder(
+          if (state is NotificationsLoading) {
+             return  const Center( child: CircularProgressIndicator());
+    } else if (state is GetNotificationsSuccess) {
+       if (state.notifications.isEmpty) {
+    return const Center(child: Text("No notifications"));
+  }   return ListView.builder(
               scrollDirection: Axis.vertical,
               itemCount: state.notifications.length,
+              
               itemBuilder: (context, i) {
                 final notification = state.notifications[i];
                 return Align(
@@ -56,7 +74,7 @@ class Notifications extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                notification["title"] ?? "No Title",
+                                notification.title,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -64,14 +82,14 @@ class Notifications extends StatelessWidget {
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                notification["message"] ?? "No message",
+                                notification.body,
                                 style: const TextStyle(fontSize: 14),
                                 softWrap: true,
                                 textAlign: TextAlign.start,
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                notification["date"] ?? "Unknown Date",
+                                DateFormat('d/MM/yyyy                                      hh:mm a').format(DateTime.parse(notification.date)),
                                 style: const TextStyle(
                                   
                                   fontSize: 12,
@@ -87,16 +105,11 @@ class Notifications extends StatelessWidget {
                 );
               },
             );
-          } else {
-            return const Center(
-              child: Text(
-                "No Notifications",
-                style: TextStyle(fontSize: 16, color: Colors.black),
-              ),
-            );
-          }
-        },
-      ),
-    );
+          } else if (state is GetNotificationsFailure) {
+      return Center(child: Text(state.errorMessage));
+    }
+    return  const Center(child: CircularProgressIndicator());
+  },
+    ));
   }
 }

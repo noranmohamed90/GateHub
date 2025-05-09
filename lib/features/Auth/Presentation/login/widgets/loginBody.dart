@@ -131,7 +131,7 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                   width: 180,
                   child: CustomeGeneralButton(
                     text: state is LoginLoading ? 'Loading...' : 'Log In',
-                    onTap: () {
+                    onTap: () async{
                        String? validationMessage =context.read<LoginCubit>().validateInput();
                       if (validationMessage != null) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -139,6 +139,7 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                         );
                         return;
                       }
+                      await context.read<LoginCubit>().getDeviceToken();
                       context.read<LoginCubit>().loginUser();
                     },
                   ),

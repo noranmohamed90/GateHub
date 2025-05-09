@@ -4,6 +4,7 @@ class EndPoints {
   static String voProfile= "/api/vehicleOwner/VOProfile";
   static String requestOtp="/api/vehicleOwner/request-otp";
   static String resetPassword ="/api/vehicleOwner/reset-password";
+  static String getNotifications ="/api/vehicleOwner/GetNotifications";
 } 
 
  class ApiKey{
@@ -30,6 +31,9 @@ class EndPoints {
   static String otp = "otp";
   static String newPassword = "newPassword";
   static String confirmPassword = "confirmPassword";
-  
-  
+  static String deviceToken = "deviceToken";
+  static String title = "title";
+  static String body = "body";
+  static String createdAt = "createdAt";
+  static String isRead = "isRead";
  } 
