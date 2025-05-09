@@ -149,9 +149,9 @@ class _HomeBodyState extends State<HomeBody> {
                                 ),
                                 const HorizintalSpace(12),
                                 Text(
-                                  "120 LE",
+                                  "120.0 LE",
                                   style: const TextStyle(
-                                    color: kMainColor,
+                                    color: Colors.grey,
                                     fontSize: 18,
                                   ),
                                 ),
@@ -175,12 +175,12 @@ class _HomeBodyState extends State<HomeBody> {
                                     fontSize: 18,
                                   ),
                                 ),
-                                const HorizintalSpace(9),
+                                const HorizintalSpace(10),
                                 Text(
-                                  '---',
+                                  '8/05/2025',
                                   style: const TextStyle(
-                                    color: kMainColor,
-                                    fontSize: 18,
+                                    color: Colors.grey,
+                                    fontSize: 16,
                                   ),
                                 ),
                               ],
@@ -201,8 +201,8 @@ class _HomeBodyState extends State<HomeBody> {
                                 Text(
                                   getNearestLicenseDate(state.user),
                                   style: const TextStyle(
-                                    color: kMainColor,
-                                    fontSize: 18,
+                                    color: Colors.grey,
+                                    fontSize: 16,
                                   ),
                                 ),
                               ],
