@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gatehub/Home/presentation/Home.dart';
-import 'package:gatehub/Payment/paymentView.dart';
-import 'package:gatehub/Payment/rechargeView.dart';
 import 'package:gatehub/Screens/presentation/profile.dart';
-import 'package:gatehub/Settings/setting_View.dart';
+import 'package:gatehub/SettingsPage/settingView.dart';
 import 'package:gatehub/core/constants.dart';
+import 'package:gatehub/cubit/bloc/cubit/change_pass_cubit.dart';
+import 'package:gatehub/paymentScreen/paymentView.dart';
+import 'package:gatehub/recharge/rechargeView.dart';
 
 class CustomeBottomnavigatingbar extends StatefulWidget {
   const CustomeBottomnavigatingbar({super.key});
@@ -15,10 +17,10 @@ class _CustomeBottomnavigatingbarState extends State<CustomeBottomnavigatingbar>
   int selectedIndex = 0;
   final List<Widget> pages = [
   const HomeScreen(),     
-  const Paymentview(),     
-  const Rechargeview(),    
+  const PaymentView(),     
+  const RechargeView(), 
   const ProfileView(),     
-  const SettingView(),     
+   Container(),    
 ];
 
   @override
@@ -40,9 +42,29 @@ class _CustomeBottomnavigatingbarState extends State<CustomeBottomnavigatingbar>
       ),
       bottomNavigationBar:  BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
+
           onTap: (value) {
+            if (value == 4) {
+              showModalBottomSheet(
+                context: context,
+                shape: const RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                isScrollControlled: true,
+                builder: (context) => Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: BlocProvider.value(
+                    value: BlocProvider.of<ChangePassCubit>(context),
+                    child: const Settingview(),
+                  ),
+                ),
+              );
+              return;
+            }
+
             setState(() {
-              selectedIndex = value; 
+              selectedIndex = value;
             });
           },
           currentIndex: selectedIndex,

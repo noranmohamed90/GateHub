@@ -11,6 +11,8 @@ class UserInfo {
   final double balance;
   final String licenseEnd;
   final String address;
+   final double pendingFees;
+  // final String lastPaymentDate;
   final List<VehicleModel> vehicles;
   final List<TransactionModel> transactions;
   
@@ -24,7 +26,9 @@ class UserInfo {
     required this.balance, 
     required this.licenseEnd,
     required this.address,
-    required this.vehicles
+    required this.vehicles,
+    // required this.lastPaymentDate,
+    required this.pendingFees
      
      });
      factory UserInfo.fromJson(Map<String, dynamic> jsonData) {
@@ -36,9 +40,13 @@ class UserInfo {
     name: getIt<CacheHelper>().getData(key: 'name') ?? '',
     natId: getIt<CacheHelper>().getData(key: 'natId') ?? '',
     phoneNumber: jsonData[ApiKey.phoneNumber] ?? '',
-    balance: (jsonData[ApiKey.balance] as num?)?.toDouble() ?? 0.0,
+       balance: jsonData['balance'] is double
+        ? jsonData['balance']
+        : double.tryParse(jsonData['balance'].toString()) ?? 0.0,
     licenseEnd: vehicle[ApiKey.licenseEnd] ?? '',
     address: jsonData[ApiKey.address] ?? '',
+    // lastPaymentDate: jsonData['lastPaymentDate'] ?? '',
+    pendingFees: jsonData['pendingFees']?.toDouble() ?? 0.0, 
      vehicles: (jsonData['vehicles'] as List)
           .map((vehicleJson) => VehicleModel.fromJson(vehicleJson))
           .toList(),

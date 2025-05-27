@@ -51,7 +51,7 @@ class _LoginViewBodyState extends State<LoginViewBody> {
               );
             } else if (state is LoginFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.errorMessage)),
+                SnackBar(content: Text('Invalid ID or Passwors'),backgroundColor: Colors.red,),
               );
             }
           },

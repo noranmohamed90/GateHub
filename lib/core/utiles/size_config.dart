@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gatehub/models/finesModel.dart';
 
 class SizeConfig {
   static double? screenHeight;
@@ -21,3 +22,6 @@ class SizeConfig {
      
   }
 }
+
+double calculateTotalFines(List<Finesmodel> fines) =>
+  fines.fold(0, (sum, fine) => sum + ((fine.feeValue ?? 0) + (fine.fineValue ?? 0)));

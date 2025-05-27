@@ -1,11 +1,19 @@
 class EndPoints {
   static String baseUrl= "http://gatehub.runasp.net";
-  static String login= "/api/vehicleOwner/login";
-  static String voProfile= "/api/vehicleOwner/VOProfile";
-  static String requestOtp="/api/vehicleOwner/request-otp";
+  static String login = "/api/vehicleOwner/login";
+  static String voProfile = "/api/vehicleOwner/VOProfile";
+  static String requestOtp ="/api/vehicleOwner/request-otp";
   static String resetPassword ="/api/vehicleOwner/reset-password";
   static String getNotifications ="/api/vehicleOwner/GetNotifications";
-} 
+  static String changePassword = "/api/vehicleOwner/ChangePassword";
+  static String logout ='/api/vehicleOwner/logout';
+  static String recharge ='/api/vehicleOwner/recharge-balance';
+  static String webhook = "/api/vehicleOwner/webhook";
+  static String finesandfees = "/api/vehicleOwner/VOEntries";
+  static String visaPayment = "/api/vehicleOwner/pay-multiple-vehicle-entries";
+  static String walletPayment = "/api/vehicleOwner/pay-from-balance";
+  static String objection = "/api/vehicleOwner/SubmitObjection";
+  } 
 
  class ApiKey{
   static String statusCode = "statusCode";
@@ -36,4 +44,14 @@ class EndPoints {
   static String body = "body";
   static String createdAt = "createdAt";
   static String isRead = "isRead";
+  static String currentPassword = "currentPassword";
+  static String message = "message";
+  static String paymentUrl = "paymentUrl";
+  static String feeValue = "feeValue";
+  static String fineValue = "fineValue";
+  static String fineType = "fineType";
+  static String gateName = "gateName";
+  static String date = "date";
+  static String isPaid = "isPaid";
+
  } 

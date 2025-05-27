@@ -45,7 +45,7 @@ class OtpCubit extends Cubit<OtpState> {
       return 'Please re-enter your password';
     }else if(passController.text!=confirmPassController.text){
         return'The passwords you entered do not match';
-    }if (passController.text.length <=8 && hasDigits ) {
+    }if (passController.text.length <=9 && hasDigits ) {
     return 'Password must have least one alphanumeric character.'; 
   } else if (passController.text.length <=10 && hasDigits && hasUppercase && hasLowercase) {
     return 'Passwords must have at least one non alphanumeric character.';

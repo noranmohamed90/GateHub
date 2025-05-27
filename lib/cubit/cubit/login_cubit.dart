@@ -3,8 +3,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:gatehub/cache/cache_helper.dart';
 import 'package:gatehub/core/utiles/service_locator.dart';
-//import 'package:gatehub/cubit/balance_cubit.dart';
-//import 'package:gatehub/cubit/balance_states.dart';
 import 'package:gatehub/models/login_model.dart';
 import 'package:gatehub/models/user_info.dart';
 import 'package:gatehub/services/api_consumer.dart';
@@ -15,9 +13,7 @@ part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit(this.api,) : super(LoginInitial());  
-  final ApiConsumer api;
-
-  
+  final ApiConsumer api;  
   final TextEditingController natIdController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   String?deviceToken;
@@ -52,6 +48,7 @@ class LoginCubit extends Cubit<LoginState> {
       ApiKey.password : passwordController.text,
       ApiKey.rememberMe:true,
       ApiKey.deviceToken:deviceToken,
+      
   });
       user=LoginModel.fromJson(response);
     final decodeToken =   JwtDecoder.decode(user!.token); 
@@ -64,6 +61,8 @@ class LoginCubit extends Cubit<LoginState> {
     print("User ID: ${user!.id}");
     print("User email: ${user!.email}");
     print("deviceToken: ${user!.deviceToken}");
+    print("TOKEN USED: ${user!.token}");
+
   emit(LoginSuccess());
 } on ServerException catch (e) {
   emit(LoginFailure(errorMessage: e.errorModel.errorMessage));
@@ -74,17 +73,7 @@ getUserInfo ()async{
   try {
     emit(GetUserInfoLoading());
   final response =await api.get(
-      EndPoints.voProfile); 
-  //final userInfo = UserInfo.fromJson(response);
-  
-  // final balanceCubit = getIt<BalanceCubit>();
-  //   balanceCubit.emit(UpdateBalanceState(
-  //     balance: userInfo.balance,
-  //     transactions: [], // لو عندك ترانزكشنز من الbackend ممكن تحطها هنا
-  //     pendingFees: 0, // أو تجيبها من الbackend لو متاحة
-  //     lastPaymentDate: '__', // أو تجيبها من الbackend لو متاحة
-  //   ));
-    
+      EndPoints.voProfile);
       emit(GetUserInfoSuccess(user: UserInfo.fromJson(response)));
 } on ServerException catch (e) {
    emit(GetUserInfoFailure(errorMessage: e.errorModel.errorMessage));
@@ -99,5 +88,6 @@ void checkIfUserLoggedIn() async {
     emit(LoginInitial());
   }
 }
+
 }
 

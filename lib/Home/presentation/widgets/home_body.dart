@@ -4,11 +4,13 @@ import 'package:gatehub/Home/presentation/widgets/notifications.dart';
 import 'package:gatehub/core/constants.dart';
 import 'package:gatehub/core/utiles/size_config.dart';
 import 'package:gatehub/core/widgets/sapce_widget.dart';
+import 'package:gatehub/cubit/bloc/cubit/fines_cubit.dart';
 import 'package:gatehub/cubit/cubit/login_cubit.dart';
 import 'package:gatehub/cubit/notifications_cubit.dart';
 import 'package:gatehub/cubit/notifications_states.dart';
 import 'package:gatehub/models/user_info.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeBody extends StatefulWidget {
   const HomeBody({super.key});
@@ -16,12 +18,10 @@ class HomeBody extends StatefulWidget {
   @override
   State<HomeBody> createState() => _HomeBodyState();
 }
-
 String getNearestLicenseDate(UserInfo user) {
   if (user.vehicles.isEmpty) {
     return 'No Vehicles';
   }
-
   final nearestLicenseEndDate = user.vehicles
       .map((vehicle) => DateTime.parse(vehicle.licenseEnd))
       .toList()
@@ -29,13 +29,34 @@ String getNearestLicenseDate(UserInfo user) {
 
   return DateFormat('d/MM/yyyy').format(nearestLicenseEndDate.first);
 }
+Future<void> saveLastPaymentDate() async {
+  final prefs = await SharedPreferences.getInstance();
+  final now = DateTime.now().toIso8601String(); 
+  await prefs.setString('lastPaymentDate', now);
+}
+Future<DateTime?> getLastPaymentDate() async {
+  final prefs = await SharedPreferences.getInstance();
+  final dateString = prefs.getString('lastPaymentDate');
+  if (dateString == null) return null;
+  return DateTime.tryParse(dateString);
+}
 
 class _HomeBodyState extends State<HomeBody> {
+  DateTime? lastPaymentDate;
   @override
   void initState() {
     super.initState();
     context.read<LoginCubit>().getUserInfo();
+     context.read<NotificationCubit>().getNotifications();
+     loadLastPaymentDate();
   }
+    Future<void> loadLastPaymentDate() async {
+    final date = await getLastPaymentDate();
+    setState(() {
+      lastPaymentDate = date;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -65,15 +86,15 @@ class _HomeBodyState extends State<HomeBody> {
                       IconButton(
                         icon: const Icon(Icons.notifications),
                         color: kMainColor,
-                        onPressed: () {
+                        onPressed: () async{
                           context.read<NotificationCubit>().readNotifications();
-                          Navigator.push(
+                         await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => Notifications(),
                             ),
-                          );
-                        },
+                          ); 
+                        },         
                       ),
                       if (unreadCount > 0)
                         Positioned(
@@ -129,7 +150,7 @@ class _HomeBodyState extends State<HomeBody> {
                           ),
                           const VerticalSpace(1),
                           Text(
-                            "Your Balance is ${state.user.balance} LE",
+                            "Your Balance is ${state.user.balance} EGP",
                             style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 15,
@@ -147,15 +168,16 @@ class _HomeBodyState extends State<HomeBody> {
                                     fontSize: 18,
                                   ),
                                 ),
-                                const HorizintalSpace(12),
-                                Text(
-                                  "120.0 LE",
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ],
+                                const HorizintalSpace(8),
+                                BlocBuilder<FinesCubit, FinesState>(
+  builder: (context, finesState) {
+    if (finesState is GetFinesInfoSuccess) {
+      final totalPending = calculateTotalFines(finesState.fines);
+      return Text("$totalPending EGP", style: TextStyle(fontSize: 18, color: Colors.grey));
+    } else {
+      return const Text("Loading...");
+    }
+                         })                   ],
                             ),
                           ),
                           const Divider(
@@ -175,14 +197,23 @@ class _HomeBodyState extends State<HomeBody> {
                                     fontSize: 18,
                                   ),
                                 ),
-                                const HorizintalSpace(10),
-                                Text(
-                                  '8/05/2025',
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 16,
-                                  ),
-                                ),
+                                const HorizintalSpace(9),
+                               lastPaymentDate == null
+                                    ? const Text(
+                                        'NO',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 16,
+                                        ),
+                                      )
+                                    : Text(
+                                        DateFormat('d/MM/yyyy')
+                                            .format(lastPaymentDate!),
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 16,
+                                        ),
+                                      ),
                               ],
                             ),
                           ),

@@ -19,20 +19,13 @@ class NotificationCubit extends Cubit<NotificationState> {
     String?token=await _firebaseMessaging.getToken();
     print("Token :${token}");
 
-  //     Future <void>saveNotificatinToFireStore(String title, String body)async{
-  //   await FirebaseFirestore.instance.collection('notifications').add({
-  //      'title': title,
-  //      'body': body,
-  //      'date': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
-  //   });
-  // }
   FirebaseMessaging.onMessage.listen((RemoteMessage message){
      final title = message.notification?.title ?? 'No Title';
      final body = message.notification?.body ?? 'No Title';
       sendNotification(title, body);
-    //  saveNotificatinToFireStore(title, body);
   });
   }
+
 
   void sendNotification(String title, String message) {
     final formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
@@ -69,9 +62,13 @@ class NotificationCubit extends Cubit<NotificationState> {
     )).toList();
 
     final mergedList = [...firebaseList, ...notificationsList];
+    
+
+    emit(NotificationUpdated(List.from(_notifications), _unreadNotifications));
     emit(GetNotificationsSuccess(mergedList));
 } on ServerException catch (e) {
    emit(GetNotificationsFailure(errorMessage: e.errorModel.errorMessage));
+   
 }
  }
 }Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -81,32 +78,5 @@ class NotificationCubit extends Cubit<NotificationState> {
   getIt<NotificationCubit>().sendNotification(title, body);
 }
 
-
-
-
-// Future<void> getNotificationsFromFirestore() async {
-//   emit(NotificationsLoading());
-//   try {
-//     final snapshot = await FirebaseFirestore.instance
-//         .collection('notifications') 
-//         .get();
-
-//     print("Documents: ${snapshot.docs.length}");
-
-//     final notifications = snapshot.docs.map((doc) => NotificationsModel(
-//       title: doc['title'] ?? '',
-//       body: doc['body'] ?? '',
-//       date: doc['date'] ?? '',
-//       isRead: false,
-//     )).toList();
-
-//     emit(GetNotificationsSuccess(notifications));
-//   } catch (e) {
-//     print("ERROR: $e");
-//     emit(GetNotificationsFailure(errorMessage: e.toString()));
-//   }
-// }
-
- 
 
 
